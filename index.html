@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Captioning Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Live Captioning Pipeline</h1>
+        <p>Press "Start" and speak. Edit the raw text and press "Re-Simplify" to fix errors.</p>
+
+        <div class="controls">
+            <button id="toggle-btn">Start Listening</button>
+            <button id="clear-btn" class="secondary-btn">Clear Slate</button>
+        </div>
+
+        <div class="caption-box-container">
+            <div class="caption-box">
+                <div class="caption-header">
+                    <h2>Raw Transcription (Editable)</h2>
+                    <button id="resimplify-btn" class="secondary-btn">Re-Simplify</button>
+                </div>
+                <textarea id="raw-text-output" class="caption-content"></textarea>
+            </div>
+            <div class="caption-box">
+                <div class="caption-header">
+                    <h2>Deaf-Friendly Caption</h2>
+                </div>
+                <div id="simple-text-output" class="caption-content"></div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
