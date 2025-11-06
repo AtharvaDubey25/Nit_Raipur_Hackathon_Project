@@ -1,7 +1,17 @@
+/* --- 1. Base Dark Mode & Font --- */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
+
+/* --- HIDE ELEMENTS FOR GSAP INTRO --- */
+h1, p, .language-selector, .controls, .caption-box {
+    opacity: 0;
+    visibility: hidden;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
+    /* YouTube/ChatGPT Dark Gray */
+    background-color: #121212; 
+    color: #e0e0e0;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
     margin: 0;
     padding: 20px;
     display: flex;
@@ -16,6 +26,47 @@ body {
     text-align: center;
 }
 
+h1 {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+p {
+    color: #aaa;
+}
+
+/* --- 2. Language Selector (Dark) --- */
+.language-selector {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.lang-btn {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+    border: 1px solid #555; /* Darker border */
+    border-radius: 20px;
+    background-color: #2a2a2a; /* Dark background */
+    color: #e0e0e0; /* Light text */
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.lang-btn:hover {
+    background-color: #3f3f3f;
+}
+
+.lang-btn.active {
+    background-color: #e0e0e0; /* Bright background */
+    color: #121212; /* Dark text */
+    border-color: #e0e0e0;
+}
+
+/* --- 3. Controls (Dark) --- */
 .controls {
     display: flex;
     justify-content: center;
@@ -28,35 +79,37 @@ body {
     padding: 12px 25px;
     border: none;
     border-radius: 8px;
-    background-color: #007bff;
-    color: white;
+    background-color: #3ea6ff; /* Brighter blue for dark mode */
+    color: #121212;
+    font-weight: 700;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 #toggle-btn:hover {
-    background-color: #0056b3;
+    background-color: #6ebcff;
 }
 
 #toggle-btn.listening {
-    background-color: #dc3545;
+    background-color: #ff4d4d; /* Brighter red */
+    color: #fff;
 }
 
-/* --- NEW STYLES --- */
 .secondary-btn {
     font-size: 0.9rem;
     padding: 5px 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #555;
     border-radius: 6px;
-    background-color: #f8f9fa;
-    color: #333;
+    background-color: #2a2a2a;
+    color: #e0e0e0;
     cursor: pointer;
 }
 
 .secondary-btn:hover {
-    background-color: #e2e6ea;
+    background-color: #3f3f3f;
 }
 
+/* --- 4. Caption Boxes (Dark) --- */
 .caption-box-container {
     display: flex;
     justify-content: space-between;
@@ -66,50 +119,52 @@ body {
 
 .caption-box {
     width: 48%;
-    background-color: #000;
-    color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    /* ChatGPT Box Color */
+    background-color: #1e1e1e; 
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    
+    /* This is for the animation to transition smoothly */
+    transition: box-shadow 0.5s ease-out;
 }
 
-/* --- NEW STYLE --- */
 .caption-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    background-color: #222;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    padding: 10px 15px;
+    background-color: #2a2a2a;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
 .caption-header h2 {
     font-size: 1rem;
     margin: 0;
+    color: #aaa;
 }
 
 .caption-content {
-    font-size: 1.5rem; /* Large, readable font */
+    font-size: 1.5rem;
     line-height: 1.6;
     padding: 20px;
     min-height: 200px;
     text-align: left;
-    white-space: pre-wrap; /* Preserves line breaks */
-    word-wrap: break-word; /* Breaks long words */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: #fff; /* Main text is white */
 }
 
-/* --- NEW STYLE for <textarea> --- */
 textarea.caption-content {
     width: 100%;
-    box-sizing: border-box; /* Important for padding */
-    background-color: #000;
+    box-sizing: border-box;
+    background-color: #1e1e1e; /* Match box */
     color: #fff;
     border: none;
-    resize: none; /* Disables resizing */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    resize: none;
 }
 
 textarea.caption-content:focus {
     outline: none;
-    box-shadow: 0 0 5px #007bff;
+    box-shadow: 0 0 5px #3ea6ff; /* Use the blue from the button */
 }

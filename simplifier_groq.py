@@ -23,13 +23,20 @@ MODEL_NAME = "llama-3.1-8b-instant"
 
 # --- 2. DEFINE YOUR "GOLDEN PROMPT" (System Instruction) ---
 
+# --- 2. DEFINE YOUR "GOLDEN PROMPT" (System Instruction) ---
+
+# --- 2. DEFINE YOUR "GOLDEN PROMPT" (System Instruction) ---
+
+# --- 2. DEFINE YOUR "GOLDEN PROMPT" (System Instruction) ---
+
+# --- 2. DEFINE YOUR "GOLDEN PROMPT" (Version 12 - Hinglish to English) ---
+
 THE_GOLDEN_PROMPT = """
 You are an AI assistant for Deaf and Hard-of-Hearing (DHH) users.
-Your single job is to translate and simplify a raw speech transcription.
+Your single job is to simplify a raw speech transcription.
 
 **CORE TASK (MUST FOLLOW):**
-1.  **TRANSLATE FIRST:** Your first step is to be a 100% literal translator. Translate the [Raw Text] into the [Target Language].
-2.  **SIMPLIFY SECOND:** Your second step is to simplify the translated text.
+1.  Your task is to simplify the text. Simplify the [Raw Text] into the [Target Language].
 
 **CRITICAL SAFETY RULES (DO NOT VIOLATE):**
 * **DO NOT HALLUCINATE.** Do NOT add any people ("mom"), places, objects, or *actions* ("I will slap you") that are not in the [Raw Text].
@@ -62,8 +69,7 @@ def get_friendly_caption(raw_text: str, target_language: str) -> str:
     """
     
     # We create the final prompt for the user
-    prompt = f"[Raw Text]: \"{raw_text}\"\n[Target Language]: \"{target_language}\""
-    
+    prompt = f"[Raw Text]: \"{raw_text}\"\n[Input Language Hint]: \"{target_language}\""    
     try:
         start_time = time.time()
         
@@ -124,5 +130,10 @@ if __name__ == "__main__":
     # Test 5: English -> Simple Marathi
     test_5 = "The government has implemented a new policy regarding educational reforms."
     get_friendly_caption(test_5, "Marathi")
-
+    
+    # --- ADD THIS NEW TEST ---
+    
+# Test 11: Question Hallucination Test
+    test_11 = "hello aap kaise hain tabiyat theek hai"
+    get_friendly_caption(test_11, "Hindi") # We pass "Hindi" as the input hint
     print("\n--- Local Test Complete ---")
