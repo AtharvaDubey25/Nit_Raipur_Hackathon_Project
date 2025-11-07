@@ -1,46 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Captioning Demo</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clario - Real-Time Captioning</title>
+
+  <!-- Favicon (YouTube-style CC Icon) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,
+  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>
+    <rect x='2' y='4' width='20' height='16' rx='2' ry='2' stroke='black' stroke-width='2'/>
+    <line x1='7' y1='10' x2='17' y2='10' stroke='black' stroke-width='2' stroke-linecap='round'/>
+    <line x1='7' y1='14' x2='14' y2='14' stroke='black' stroke-width='2' stroke-linecap='round'/>
+  </svg>">
+
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-    <div class="container">
-        <h1>🎙️ Live Captioning Pipeline</h1>
-        <p>Press "Start" and speak. Edit the raw text and press "Re-Simplify" to fix errors.</p>
-
-        <div class="language-selector">
-            <button class="lang-btn active" data-lang="English">English</button>
-            <button class="lang-btn" data-lang="Hindi">Hindi</button>
-            <button class="lang-btn" data-lang="Marathi">Marathi</button>
-            <button class="lang-btn" data-lang="Tamil">Tamil</button>
-            <button class="lang-btn" data-lang="Telugu">Telugu</button>
-            <button class="lang-btn" data-lang="Bangla">Bangla</button>
-        </div>
-        <div class="controls">
-            <button id="toggle-btn">Start Listening</button>
-            <button id="clear-btn" class="secondary-btn">Clear Slate</button>
-        </div>
-
-        <div class="caption-box-container">
-            <div class="caption-box">
-                <div class="caption-header">
-                    <h2>Raw Transcription (Editable)</h2>
-                    <button id="resimplify-btn" class="secondary-btn">Re-Simplify</button>
-                </div>
-                <textarea id="raw-text-output" class="caption-content"></textarea>
-            </div>
-            <div class="caption-box">
-                <div class="caption-header">
-                    <h2>Deaf-Friendly Caption</h2>
-                </div>
-                <div id="simple-text-output" class="caption-content"></div>
-            </div>
-        </div>
+  <!-- 🌙 NAVBAR -->
+  <!-- 🌙 NAVBAR -->
+<nav class="navbar">
+  <div class="nav-left">
+    <div class="brand">
+      <img
+        src="data:image/svg+xml,
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>
+          <rect x='2' y='4' width='20' height='16' rx='2' ry='2' stroke='%23a78bfa' stroke-width='2'/>
+          <line x1='7' y1='10' x2='17' y2='10' stroke='%23a78bfa' stroke-width='2' stroke-linecap='round'/>
+          <line x1='7' y1='14' x2='14' y2='14' stroke='%23a78bfa' stroke-width='2' stroke-linecap='round'/>
+        </svg>"
+        alt="CC"
+        class="nav-icon"
+      />
+      Clario
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="app.js"></script>
+  </div>
+
+  <div class="nav-right">
+    <a href="#">Features</a>
+    <a href="#">About</a>
+    <a href="#" class="get-started">Get Started</a>
+    <button id="theme-toggle" class="theme-btn" title="Toggle Theme">🌙</button>
+  </div>
+</nav>
+
+
+
+  <!-- 🧠 MAIN CONTENT -->
+  <div class="container">
+    <h1 class="clario-header">
+      <span class="cc-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="4" width="20" height="16" rx="2" ry="2" stroke="#a78bfa" stroke-width="2"/>
+          <line x1="7" y1="10" x2="17" y2="10" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+          <line x1="7" y1="14" x2="14" y2="14" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Clario
+    </h1>
+    <p>Real-time speech-to-text with AI simplification.</p>
+
+    <!-- 🌐 Language Selector -->
+    <div class="language-selector">
+      <button class="lang-btn active" data-lang="English">English</button>
+      <button class="lang-btn" data-lang="Hindi">Hindi</button>
+      <button class="lang-btn" data-lang="Marathi">Marathi</button>
+      <button class="lang-btn" data-lang="Tamil">Tamil</button>
+      <button class="lang-btn" data-lang="Telugu">Telugu</button>
+      <button class="lang-btn" data-lang="Bangla">Bangla</button>
+    </div>
+
+    <!-- 🎛️ Controls -->
+    <div class="controls">
+      <button id="toggle-btn"><i class="fas fa-microphone"></i> Start Listening</button>
+      <button id="clear-btn" class="secondary-btn">Clear Slate</button>
+    </div>
+
+    <!-- 📝 Caption Boxes -->
+    <div class="caption-box-container">
+      <div class="caption-box">
+        <div class="caption-header">
+          <h2>Raw Transcription (Editable)</h2>
+          <button id="resimplify-btn" class="secondary-btn">Re-Simplify</button>
+        </div>
+        <textarea id="raw-text-output" class="caption-content" placeholder="Your raw speech text will appear here..."></textarea>
+      </div>
+
+      <div class="caption-box">
+        <div class="caption-header">
+          <h2>Deaf-Friendly Caption</h2>
+        </div>
+        <div id="simple-text-output" class="caption-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

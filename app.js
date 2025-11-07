@@ -1,10 +1,6 @@
 // --- 1. GSAP Page Load Animation ---
-// This runs as soon as the page is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Create a "timeline" to control the sequence
     const tl = gsap.timeline();
-    
-    // Animate elements in, one after another (stagger)
     tl.to('h1', { opacity: 1, visibility: 'visible', y: -20, duration: 0.5, delay: 0.2 })
       .to('p', { opacity: 1, visibility: 'visible', y: -10, duration: 0.4 }, "-=0.3")
       .to('.language-selector', { opacity: 1, visibility: 'visible', duration: 0.5 }, "-=0.2")
@@ -16,11 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- 2. Setup SpeechRecognition ---
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-// Check for browser support
 if (!window.SpeechRecognition) {
     alert("Sorry, your browser doesn't support live speech recognition. Please use Chrome or Edge.");
 } else {
-    // --- 3. Get DOM Elements ---
     const recognition = new SpeechRecognition();
     const toggleBtn = document.getElementById('toggle-btn');
     const rawOutput = document.getElementById('raw-text-output');
@@ -29,8 +23,6 @@ if (!window.SpeechRecognition) {
     const resimplifyBtn = document.getElementById('resimplify-btn');
     const languageSelector = document.querySelector('.language-selector');
     const langButtons = document.querySelectorAll('.lang-btn');
-
-    // Get the box we want to make glow
     const simpleBox = simpleOutput.closest('.caption-box');
 
     let isListening = false;
@@ -38,12 +30,11 @@ if (!window.SpeechRecognition) {
     let simpleTextHistory = '';
     let targetLanguage = 'English';
 
-    // --- 4. Configure the STT Engine ---
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-IN';
 
-    // --- 5. Handle Button Clicks ---
+    // --- Start/Stop Listening ---
     toggleBtn.addEventListener('click', () => {
         isListening = !isListening;
         if (isListening) {
@@ -51,7 +42,6 @@ if (!window.SpeechRecognition) {
             simpleOutput.textContent = "";
             rawTextHistory = "";
             simpleTextHistory = "";
-            
             recognition.start();
             toggleBtn.textContent = 'Stop Listening';
             toggleBtn.classList.add('listening');
@@ -62,6 +52,7 @@ if (!window.SpeechRecognition) {
         }
     });
 
+    // --- Clear All ---
     clearBtn.addEventListener('click', () => {
         rawTextHistory = '';
         simpleTextHistory = '';
@@ -69,132 +60,138 @@ if (!window.SpeechRecognition) {
         simpleOutput.textContent = '';
     });
 
+    // --- Re-simplify edited text ---
     resimplifyBtn.addEventListener('click', () => {
-        const editedText = rawOutput.value;
-        if (!editedText.trim()) return;
-
-        console.log("Re-simplifying edited text...");
+        const editedText = rawOutput.value.trim();
+        if (!editedText) return;
         simpleOutput.textContent = "Thinking...";
-        
-        sendToBackend(editedText, true, targetLanguage); 
+        sendToBackend(editedText, true, targetLanguage);
     });
 
+    // --- Language Selector ---
     languageSelector.addEventListener('click', (e) => {
         if (e.target.classList.contains('lang-btn')) {
-            langButtons.forEach(btn => {
-                btn.classList.remove('active');
-            });
+            langButtons.forEach(btn => btn.classList.remove('active'));
             e.target.classList.add('active');
             targetLanguage = e.target.dataset.lang;
-            console.log("Target language set to:", targetLanguage);
+            console.log("Language set to:", targetLanguage);
         }
     });
 
-    // --- 6. Process STT Results ---
+    // --- Handle STT Results ---
     recognition.onresult = (event) => {
         let interimTranscript = '';
-        let currentFinalTranscript = ''; 
+        let finalTranscript = '';
 
         for (let i = event.resultIndex; i < event.results.length; ++i) {
             const transcript = event.results[i][0].transcript;
-            
             if (event.results[i].isFinal) {
-                currentFinalTranscript = transcript.trim() + ' ';
-                rawTextHistory += currentFinalTranscript; 
-                
-                simpleOutput.textContent = simpleTextHistory + "Thinking...";
-
-                sendToBackend(currentFinalTranscript, false, targetLanguage);
-
+                finalTranscript += transcript.trim() + ' ';
             } else {
                 interimTranscript += transcript;
             }
         }
 
         rawOutput.value = rawTextHistory + interimTranscript;
-        
-        if (interimTranscript && !currentFinalTranscript) {
+
+        if (finalTranscript) {
+            rawTextHistory += finalTranscript;
+            simpleOutput.textContent = simpleTextHistory + "Thinking...";
+            sendToBackend(finalTranscript, false, targetLanguage);
+        } else if (interimTranscript) {
             simpleOutput.textContent = simpleTextHistory + "Listening...";
         }
     };
 
-    // --- 7. Handle Backend Communication (with GSAP) ---
+    // --- Backend API call (with GSAP glow effect) ---
     async function sendToBackend(textToSimplify, isFullReplace = false, language) {
-        console.log(`Sending to backend (Lang: ${language}):`, textToSimplify);
+        console.log(`Sending to backend (${language}):`, textToSimplify);
 
         try {
             const response = await fetch('http://127.0.0.1:8000/simplify-text', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    text: textToSimplify,
-                    language: language 
-                })
+                body: JSON.stringify({ text: textToSimplify, language })
             });
 
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
             const data = await response.json();
-            console.log("Got from backend:", data.simple_text);
 
-            // --- THIS IS THE GSAP "FLASH" ---
+            // Flash animation for the simple box
             gsap.to(simpleBox, {
-                boxShadow: "0 0 40px 10px rgba(255, 255, 255, 0.15)", // Glow
-                duration: 0.3,    // Fast fade in
-                yoyo: true,       // Fade back out
-                repeat: 1,        // Play in, then out (yoyo)
+                boxShadow: "0 0 40px 10px rgba(167, 139, 250, 0.25)",
+                duration: 0.3,
+                yoyo: true,
+                repeat: 1,
                 ease: "power1.inOut"
             });
-            // ------------------------------------
 
             if (isFullReplace) {
-                simpleTextHistory = data.simple_text; 
-                simpleOutput.textContent = simpleTextHistory;
+                simpleTextHistory = data.simple_text;
             } else {
-                simpleTextHistory += data.simple_text + ' '; 
-                simpleOutput.textContent = simpleTextHistory; 
+                simpleTextHistory += data.simple_text + ' ';
             }
-
+            simpleOutput.textContent = simpleTextHistory;
         } catch (error) {
-            console.error("Error sending to backend:", error);
-            if (isFullReplace) {
-                simpleOutput.textContent = "[Error simplifying text]";
-            } else {
-                simpleOutput.textContent = simpleTextHistory + "[Error] ";
-            }
+            console.error("Backend Error:", error);
+            simpleOutput.textContent = "[Error simplifying text]";
         }
     }
 
-    // --- 8. Handle End of Listening ---
+    // --- Restart after stop (auto-reconnect) ---
     recognition.onend = () => {
-        if (isListening) {
-            recognition.start();
-        } else {
+        if (isListening) recognition.start();
+        else {
             toggleBtn.textContent = 'Start Listening';
             toggleBtn.classList.remove('listening');
         }
     };
 
-    // --- 9. Handle Errors (UPDATED) ---
+    // --- Error Handling ---
     recognition.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
-
-        // --- THIS IS THE FIX ---
-        // Check for the "permission denied" error
-        if (event.error === 'not-allowed' || event.error === 'permission-denied') {
-            // 1. Set isListening to false to stop the 'onend' loop
+        if (['not-allowed', 'permission-denied'].includes(event.error)) {
             isListening = false;
-            
-            // 2. Visually reset the button
             toggleBtn.textContent = 'Start Listening';
             toggleBtn.classList.remove('listening');
-            
-            // 3. Give a clear, one-time alert
-            alert("You must grant microphone permission to use this app.");
-        } 
-        // --- END FIX ---
-        else if (event.error !== 'network') { 
-            // Handle other errors, but not the common "network" one
+            alert("Please allow microphone access to use this feature.");
+        } else if (event.error !== 'network') {
             alert(`Error: ${event.error}`);
         }
     };
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const themeToggle = document.getElementById('theme-toggle');
+  if (!themeToggle) {
+    console.error("Theme toggle button not found!");
+    return;
+  }
+
+  const root = document.documentElement;
+
+  if (localStorage.getItem('theme') === 'light') enableLightMode();
+  else enableDarkMode();
+
+  themeToggle.addEventListener('click', () => {
+    if (root.classList.contains('light-mode')) enableDarkMode();
+    else enableLightMode();
+  });
+
+  function enableLightMode() {
+    root.classList.add('light-mode');
+    document.body.style.backgroundColor = '#f7f7ff';
+    document.body.style.color = '#111';
+    themeToggle.textContent = '☀️';
+    localStorage.setItem('theme', 'light');
+  }
+
+  function enableDarkMode() {
+    root.classList.remove('light-mode');
+    document.body.style.backgroundColor = '#121212';
+    document.body.style.color = '#e0e0e0';
+    themeToggle.textContent = '🌙';
+    localStorage.setItem('theme', 'dark');
+  }
+});
